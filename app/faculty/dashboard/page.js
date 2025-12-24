@@ -14,17 +14,33 @@ import {
 export default function FacultyDashboard() {
   const [students, setStudents] = useState([]);
   const [search, setSearch] = useState("");
+  const [loading, setLoading] = useState(true);
 
+  /* ================= AUTH CHECK ================= */
   useEffect(() => {
+    const role = localStorage.getItem("userRole");
+    if (role !== "Faculty") {
+      window.location.href = "/login";
+      return;
+    }
     fetchApplications();
   }, []);
 
+  /* ================= FETCH APPLICATIONS ================= */
   const fetchApplications = async () => {
-    const res = await fetch("/api/faculty/applications");
-    const data = await res.json();
-    setStudents(data);
+    try {
+      const res = await fetch("/api/faculty/applications");
+      const data = await res.json();
+      setStudents(Array.isArray(data) ? data : []);
+    } catch (err) {
+      console.error(err);
+      setStudents([]);
+    } finally {
+      setLoading(false);
+    }
   };
 
+  /* ================= APPROVE ================= */
   const approveStudent = async (id) => {
     const res = await fetch("/api/faculty/approve", {
       method: "POST",
@@ -37,6 +53,7 @@ export default function FacultyDashboard() {
     fetchApplications();
   };
 
+  /* ================= REJECT ================= */
   const rejectStudent = async (id) => {
     await fetch("/api/faculty/reject", {
       method: "POST",
@@ -48,14 +65,17 @@ export default function FacultyDashboard() {
     fetchApplications();
   };
 
+  /* ================= LOGOUT ================= */
   const logout = () => {
+    localStorage.clear(); // 🔥 VERY IMPORTANT
     window.location.href = "/login";
   };
 
+  /* ================= FILTER ================= */
   const filtered = students.filter(
     (s) =>
-      s.name.toLowerCase().includes(search.toLowerCase()) ||
-      s.studentEmail.toLowerCase().includes(search.toLowerCase())
+      s.name?.toLowerCase().includes(search.toLowerCase()) ||
+      s.studentEmail?.toLowerCase().includes(search.toLowerCase())
   );
 
   return (
@@ -76,7 +96,7 @@ export default function FacultyDashboard() {
 
         <button
           onClick={logout}
-          className="flex items-center gap-2 border px-4 py-2 rounded-xl"
+          className="flex items-center gap-2 border px-4 py-2 rounded-xl hover:bg-white/10"
         >
           <LogOut size={18} /> Logout
         </button>
@@ -95,7 +115,11 @@ export default function FacultyDashboard() {
           value={students.filter(s => s.status === "approved").length}
           icon={CheckCircle}
         />
-        <Stat title="Rejected" value={students.filter(s => s.status === "rejected").length} icon={XCircle} />
+        <Stat
+          title="Rejected"
+          value={students.filter(s => s.status === "rejected").length}
+          icon={XCircle}
+        />
       </div>
 
       {/* SEARCH */}
@@ -111,25 +135,53 @@ export default function FacultyDashboard() {
 
       {/* LIST */}
       <div className="space-y-6">
+        {loading && (
+          <p className="text-slate-400">Loading applications...</p>
+        )}
+
+        {!loading && filtered.length === 0 && (
+          <p className="text-slate-400">
+            No applications available.
+          </p>
+        )}
+
         {filtered.map((s) => (
-          <div key={s._id} className="bg-slate-900 p-6 rounded-2xl border border-white/10">
+          <div
+            key={s._id}
+            className="bg-slate-900 p-6 rounded-2xl border border-white/10"
+          >
             <p><b>Name:</b> {s.name}</p>
             <p><b>Email:</b> {s.studentEmail}</p>
             <p><b>Mobile:</b> {s.mobile}</p>
-            <p><b>Status:</b> {s.status}</p>
-            {s.enrollment && <p><b>Enrollment:</b> {s.enrollment}</p>}
+            <p>
+              <b>Status:</b>{" "}
+              <span className={
+                s.status === "approved"
+                  ? "text-green-400"
+                  : s.status === "rejected"
+                  ? "text-red-400"
+                  : "text-yellow-400"
+              }>
+                {s.status}
+              </span>
+            </p>
 
+            {s.enrollment && (
+              <p><b>Enrollment:</b> {s.enrollment}</p>
+            )}
+
+            {/* ACTION BUTTONS */}
             {s.status === "pending" && (
               <div className="flex gap-4 mt-4">
                 <button
                   onClick={() => approveStudent(s._id)}
-                  className="flex-1 bg-green-600 py-2 rounded-xl"
+                  className="flex-1 bg-green-600 py-2 rounded-xl hover:bg-green-700"
                 >
                   Approve
                 </button>
                 <button
                   onClick={() => rejectStudent(s._id)}
-                  className="flex-1 bg-red-600 py-2 rounded-xl"
+                  className="flex-1 bg-red-600 py-2 rounded-xl hover:bg-red-700"
                 >
                   Reject
                 </button>
@@ -142,6 +194,7 @@ export default function FacultyDashboard() {
   );
 }
 
+/* ================= STAT CARD ================= */
 function Stat({ title, value, icon: Icon }) {
   return (
     <div className="bg-white/5 border border-white/10 p-6 rounded-xl">
