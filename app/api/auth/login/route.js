@@ -81,7 +81,8 @@ export async function POST(req) {
       return NextResponse.json({
         message: "Student login successful",
         role: "student",
-        redirectUrl: "http://localhost:3000/student/dashboard",
+       redirectUrl: "/student/dashboard",
+
       });
     }
 
