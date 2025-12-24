@@ -1,3 +1,5 @@
+"use client";
+
 import StudentSidebar from "@/components/student/StudentSidebar";
 
 export default function StudentLayout({ children }) {
