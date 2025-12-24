@@ -17,29 +17,33 @@ export default function LoginPage() {
     try {
       const res = await fetch("/api/auth/login", {
         method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({
-          email,
-          password,
-          role,
-        }),
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ email, password, role }),
       });
 
       const data = await res.json();
 
       if (!res.ok) {
-        alert(data.message);
+        alert(data.message || "Invalid credentials");
         setLoading(false);
         return;
       }
 
-      // ✅ ROLE BASED REDIRECT
-      window.location.href = data.redirectUrl;
+      /* ✅ SAVE LOGIN (COLLEGE LEVEL SESSION) */
+      localStorage.setItem("userEmail", email);
+      localStorage.setItem("userRole", role);
+
+      /* ✅ ROLE BASED REDIRECT */
+      if (role === "Student") {
+        localStorage.setItem("studentEmail", email);
+        window.location.href = "/student/dashboard";
+      } else if (role === "Faculty") {
+        localStorage.setItem("facultyEmail", email);
+        window.location.href = "/faculty/dashboard";
+      }
     } catch (error) {
-      alert("Something went wrong");
       console.error(error);
+      alert("Something went wrong");
     } finally {
       setLoading(false);
     }
@@ -76,7 +80,6 @@ export default function LoginPage() {
               >
                 <option>Student</option>
                 <option>Faculty</option>
-                <option>Admin</option>
               </select>
             </div>
           </div>
