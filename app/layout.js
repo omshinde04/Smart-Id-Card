@@ -1,14 +1,10 @@
 import "./globals.css";
-import Navbar from "@/components/Navbar";
-import Footer from "@/components/Footer";
 
 export default function RootLayout({ children }) {
   return (
     <html lang="en">
-      <body suppressHydrationWarning>
-        <Navbar />
-        <main className="pt-24">{children}</main>
-        <Footer />
+      <body className="bg-slate-950 text-white" suppressHydrationWarning>
+        {children}
       </body>
     </html>
   );
