@@ -73,81 +73,120 @@ export default function AttendancePage() {
 
     alert(`Attendance saved for ${date}`);
   };
+return (
+  <div className="p-4 md:p-8 space-y-6">
 
-  return (
-    <div className="p-4 md:p-8 space-y-6">
+    {/* ================= HEADER ================= */}
+    <motion.div
+      initial={{ opacity: 0, y: 10 }}
+      animate={{ opacity: 1, y: 0 }}
+      className="space-y-1"
+    >
+      <h1 className="text-2xl md:text-3xl font-bold">
+        Attendance Register
+      </h1>
+      <p className="text-slate-400 text-sm">
+        Select date to create / view daily attendance
+      </p>
+    </motion.div>
 
-      <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }}>
-        <h1 className="text-3xl font-bold">Attendance Register</h1>
-        <p className="text-slate-400">
-          Select date to create / view daily attendance
-        </p>
-      </motion.div>
-
+    {/* ================= DATE PICKER ================= */}
+    <div className="flex flex-col sm:flex-row sm:items-center gap-3">
+      <label className="text-sm text-slate-300">
+        Select Date
+      </label>
       <input
         type="date"
         value={date}
         onChange={(e) => setDate(e.target.value)}
-        className="bg-slate-900 border border-white/10 px-4 py-2 rounded-xl w-full md:w-60"
+        className="
+          bg-slate-900 border border-white/10
+          px-4 py-2 rounded-xl
+          w-full sm:w-56
+          text-sm
+        "
       />
+    </div>
 
-      <div className="overflow-x-auto rounded-xl border border-white/10">
-        <table className="w-full min-w-150">
-          <thead className="bg-slate-900">
+    {/* ================= TABLE ================= */}
+    <div className="overflow-x-auto rounded-xl border border-white/10">
+      <table className="w-full min-w-[600px]">
+        <thead className="bg-slate-900">
+          <tr>
+            <th className="p-3 text-left text-sm">Enrollment</th>
+            <th className="p-3 text-left text-sm">Name</th>
+            <th className="p-3 text-center text-sm">Present</th>
+            <th className="p-3 text-center text-sm">Absent</th>
+          </tr>
+        </thead>
+
+        <tbody>
+          {loading && (
             <tr>
-              <th className="p-3 text-left">Enrollment</th>
-              <th className="p-3 text-left">Name</th>
-              <th className="p-3 text-center">Present</th>
-              <th className="p-3 text-center">Absent</th>
+              <td colSpan="4" className="p-4 text-center text-slate-400">
+                Loading attendance...
+              </td>
             </tr>
-          </thead>
+          )}
 
-          <tbody>
-            {loading && (
-              <tr>
-                <td colSpan="4" className="p-4 text-center">
-                  Loading attendance...
+          {!loading && students.length === 0 && (
+            <tr>
+              <td colSpan="4" className="p-4 text-center text-slate-400">
+                No students found
+              </td>
+            </tr>
+          )}
+
+          {!loading &&
+            students.map((s) => (
+              <tr
+                key={s.enrollment}
+                className="border-t border-white/10 hover:bg-white/5 transition"
+              >
+                <td className="p-3 text-sm">{s.enrollment}</td>
+                <td className="p-3 text-sm">{s.name}</td>
+
+                <td className="p-3 text-center">
+                  <input
+                    type="radio"
+                    checked={s.status === "present"}
+                    onChange={() =>
+                      mark(s.enrollment, "present")
+                    }
+                  />
+                </td>
+
+                <td className="p-3 text-center">
+                  <input
+                    type="radio"
+                    checked={s.status === "absent"}
+                    onChange={() =>
+                      mark(s.enrollment, "absent")
+                    }
+                  />
                 </td>
               </tr>
-            )}
+            ))}
+        </tbody>
+      </table>
+    </div>
 
-            {!loading &&
-              students.map((s) => (
-                <tr key={s.enrollment} className="border-t">
-                  <td className="p-3">{s.enrollment}</td>
-                  <td className="p-3">{s.name}</td>
-
-                  <td className="p-3 text-center">
-                    <input
-                      type="radio"
-                      checked={s.status === "present"}
-                      onChange={() =>
-                        mark(s.enrollment, "present")
-                      }
-                    />
-                  </td>
-
-                  <td className="p-3 text-center">
-                    <input
-                      type="radio"
-                      checked={s.status === "absent"}
-                      onChange={() =>
-                        mark(s.enrollment, "absent")
-                      }
-                    />
-                  </td>
-                </tr>
-              ))}
-          </tbody>
-        </table>
-      </div>
-
+    {/* ================= SAVE BUTTON ================= */}
+    <div className="flex justify-end">
       <button
         onClick={saveAttendance}
-        className="flex items-center gap-2 bg-indigo-600 px-6 py-3 rounded-xl font-semibold"
+        className="
+          flex items-center gap-2
+          bg-indigo-600 hover:bg-indigo-700
+          px-6 py-3 rounded-xl
+          font-semibold text-sm
+        "
       >
         <Save size={18} /> Save Attendance
       </button>
     </div>
-  );
+
+  </div>
+);
+
 }
