@@ -94,6 +94,16 @@ export default function FacultyDashboard() {
           </p>
         </div>
 
+
+        {/* ATTENDANCE BUTTON */}
+        <a
+  href="/faculty/attendance"
+  className="border px-4 py-2 rounded-xl hover:bg-white/10"
+>
+  Mark Attendance
+</a>
+
+
         <button
           onClick={logout}
           className="flex items-center gap-2 border px-4 py-2 rounded-xl hover:bg-white/10"

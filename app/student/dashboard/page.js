@@ -32,21 +32,33 @@ export default function StudentDashboard() {
   const [data, setData] = useState(null);
   const frontRef = useRef(null);
   const backRef = useRef(null);
+  const [attendance, setAttendance] = useState(0);
+
 
   /* ================= FETCH STUDENT ================= */
   useEffect(() => {
-    const email = localStorage.getItem("studentEmail");
-    if (!email) return;
+  const email = localStorage.getItem("studentEmail");
+  if (!email) return;
 
-    fetch(`/api/student/dashboard?email=${email}`)
-      .then((res) => res.json())
-      .then(async (student) => {
-        if (student.photo) {
-          student.photo = await imageToBase64(student.photo);
-        }
-        setData(student);
-      });
-  }, []);
+  fetch(`/api/student/dashboard?email=${email}`)
+    .then((res) => res.json())
+    .then(async (student) => {
+      if (student.photo) {
+        student.photo = await imageToBase64(student.photo);
+      }
+      setData(student);
+
+      // ✅ FETCH ATTENDANCE %
+      if (student.enrollment) {
+        const res = await fetch(
+          `/api/student/attendance?enrollment=${student.enrollment}`
+        );
+        const att = await res.json();
+        setAttendance(att.percentage || 0);
+      }
+    });
+}, []);
+
 
   const status = data?.status || "not_applied";
 
@@ -105,17 +117,27 @@ return (
         Third Year • Computer Engineering
       </p>
     </motion.div>
+{/* STATS */}
+<div className="grid sm:grid-cols-3 gap-6">
+  <StatCard
+    title="ID Status"
+    value={status}
+    icon={IdCard}
+  />
 
-    {/* STATS */}
-    <div className="grid sm:grid-cols-3 gap-6">
-      <StatCard title="ID Status" value={status} icon={IdCard} />
-      <StatCard title="Attendance" value="86%" icon={CalendarCheck} />
-      <StatCard
-        title="Application"
-        value={status === "not_applied" ? "Apply Now" : "Submitted"}
-        icon={FileText}
-      />
-    </div>
+  <StatCard
+    title="Attendance"
+    value={`${attendance}%`}
+    icon={CalendarCheck}
+  />
+
+  <StatCard
+    title="Application"
+    value={status === "not_applied" ? "Apply Now" : "Submitted"}
+    icon={FileText}
+  />
+</div>
+
 
     {/* APPLY CTA */}
     {status === "not_applied" && (
