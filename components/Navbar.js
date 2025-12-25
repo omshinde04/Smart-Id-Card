@@ -16,40 +16,37 @@ import {
 export default function Navbar() {
   const [open, setOpen] = useState(false);
 
-  // Hash navigation for same page sections
+  // ✅ FIXED: proper cross-page hash routing
   const navLinks = [
-    { name: "Home", href: "#home", icon: Home },
-    { name: "About", href: "#about", icon: Info },
+    { name: "Home", href: "/#home", icon: Home },
+    { name: "About", href: "/#about", icon: Info },
   ];
 
   return (
     <header className="fixed top-0 left-0 w-full z-50">
-
-      {/* FULL WIDTH BACKGROUND */}
+      {/* BACKGROUND */}
       <div className="w-full bg-slate-950/80 backdrop-blur-xl border-b border-white/10">
-
-        {/* CENTERED CONTENT */}
         <nav className="mx-auto max-w-7xl px-6 py-4 flex items-center justify-between">
 
           {/* LOGO */}
-          <a href="#home" className="flex items-center gap-2">
+          <Link href="/#home" className="flex items-center gap-2">
             <IdCard className="h-7 w-7 text-indigo-400" />
             <span className="text-lg font-bold tracking-wide text-white">
               Smart<span className="text-indigo-400">ID</span>
             </span>
-          </a>
+          </Link>
 
-          {/* DESKTOP LINKS */}
+          {/* DESKTOP NAV */}
           <div className="hidden md:flex items-center gap-10">
             {navLinks.map((link) => (
-              <a
+              <Link
                 key={link.name}
                 href={link.href}
                 className="relative text-sm font-medium text-slate-300 hover:text-white transition group"
               >
                 {link.name}
                 <span className="absolute left-0 -bottom-1 h-0.5 w-0 bg-indigo-500 transition-all group-hover:w-full"></span>
-              </a>
+              </Link>
             ))}
           </div>
 
@@ -75,7 +72,7 @@ export default function Navbar() {
             </Link>
           </div>
 
-          {/* MOBILE MENU BUTTON */}
+          {/* MOBILE TOGGLE */}
           <button
             onClick={() => setOpen(!open)}
             className="md:hidden text-slate-300 hover:text-white transition"
@@ -83,7 +80,6 @@ export default function Navbar() {
           >
             {open ? <X size={28} /> : <Menu size={28} />}
           </button>
-
         </nav>
       </div>
 
@@ -101,7 +97,7 @@ export default function Navbar() {
 
               {/* MOBILE NAV LINKS */}
               {navLinks.map((link) => (
-                <a
+                <Link
                   key={link.name}
                   href={link.href}
                   onClick={() => setOpen(false)}
@@ -109,7 +105,7 @@ export default function Navbar() {
                 >
                   <link.icon className="h-5 w-5 text-indigo-400" />
                   {link.name}
-                </a>
+                </Link>
               ))}
 
               <div className="h-px bg-white/10 my-4"></div>
@@ -135,12 +131,10 @@ export default function Navbar() {
                 <LogIn className="h-5 w-5" />
                 Login
               </Link>
-
             </div>
           </motion.div>
         )}
       </AnimatePresence>
-
     </header>
   );
 }
