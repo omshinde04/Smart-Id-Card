@@ -11,6 +11,10 @@ import {
   Download,
   FileText,
 } from "lucide-react";
+const BASE_URL =
+  process.env.NEXT_PUBLIC_BASE_URL ||
+  "https://smart-id-card-lime.vercel.app";
+
 
 /* ================= CLOUDINARY → BASE64 ================= */
 async function imageToBase64(url) {
@@ -202,12 +206,13 @@ return (
           </div>
 
           <div style={{ display: "flex", justifyContent: "center", marginTop: "12px" }}>
-            <QRCodeCanvas
-              value={`http://localhost:3000/verify/${data.enrollment}`}
-              size={100}
-              bgColor="#020617"
-              fgColor="#ffffff"
-            />
+           <QRCodeCanvas
+  value={`${BASE_URL}/verify/${data.enrollment}`}
+  size={100}
+  bgColor="#020617"
+  fgColor="#ffffff"
+/>
+
           </div>
 
           <div style={{ display: "flex", justifyContent: "space-between", marginTop: "14px" }}>

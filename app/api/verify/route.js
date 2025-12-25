@@ -2,6 +2,9 @@ import connectDB from "../../../lib/mongodb";
 import IdApplication from "../../../models/IdApplication";
 import { NextResponse } from "next/server";
 
+// 🔥 FORCE DYNAMIC (FIXES VERCEL CACHING)
+export const dynamic = "force-dynamic";
+
 export async function GET(req) {
   try {
     const { searchParams } = new URL(req.url);
@@ -36,6 +39,7 @@ export async function GET(req) {
       },
     });
   } catch (err) {
+    console.error("VERIFY ERROR:", err);
     return NextResponse.json(
       { valid: false, message: "Server Error" },
       { status: 500 }

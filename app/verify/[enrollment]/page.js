@@ -8,14 +8,19 @@ export default function VerifyPage({ params }) {
   const [data, setData] = useState(null);
   const [loading, setLoading] = useState(true);
 
-  useEffect(() => {
-    fetch(`/api/verify?enrollment=${enrollment}`)
-      .then((res) => res.json())
-      .then((res) => {
-        setData(res);
-        setLoading(false);
-      });
-  }, [enrollment]);
+useEffect(() => {
+  fetch(`/api/verify?enrollment=${enrollment}`)
+    .then((res) => res.json())
+    .then((res) => {
+      setData(res);
+      setLoading(false);
+    })
+    .catch(() => {
+      setData({ valid: false, message: "Unable to connect to server" });
+      setLoading(false);
+    });
+}, [enrollment]);
+
 
   if (loading) {
     return (
