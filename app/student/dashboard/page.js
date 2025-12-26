@@ -228,12 +228,15 @@ return (
           </div>
 
           <div style={{ display: "flex", justifyContent: "center", marginTop: "12px" }}>
-           <QRCodeCanvas
-  value={`${BASE_URL}/verify/${data.enrollment}`}
-  size={100}
-  bgColor="#020617"
-  fgColor="#ffffff"
-/>
+          {status === "approved" && (
+  <QRCodeCanvas
+    value={`${BASE_URL}/verify/${data.enrollment}`}
+    size={100}
+    bgColor="#020617"
+    fgColor="#ffffff"
+  />
+)}
+
 
           </div>
 

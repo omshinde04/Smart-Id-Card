@@ -110,7 +110,7 @@ return (
 
     {/* ================= TABLE ================= */}
     <div className="overflow-x-auto rounded-xl border border-white/10">
-      <table className="w-full min-w-[600px]">
+      <table className="w-full min-w-">
         <thead className="bg-slate-900">
           <tr>
             <th className="p-3 text-left text-sm">Enrollment</th>

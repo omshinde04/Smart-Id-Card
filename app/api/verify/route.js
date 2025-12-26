@@ -2,7 +2,6 @@ import connectDB from "../../../lib/mongodb";
 import IdApplication from "../../../models/IdApplication";
 import { NextResponse } from "next/server";
 
-// 🔥 FORCE DYNAMIC (FIXES VERCEL CACHING)
 export const dynamic = "force-dynamic";
 
 export async function GET(req) {
@@ -21,13 +20,22 @@ export async function GET(req) {
 
     const student = await IdApplication.findOne({ enrollment });
 
-    if (!student || student.status !== "approved") {
-      return NextResponse.json({
-        valid: false,
-        message: "Invalid or Unapproved ID",
-      });
+    // ❌ Not found OR not approved
+    if (!student) {
+      return NextResponse.json(
+        { valid: false, message: "ID not found" },
+        { status: 404 }
+      );
     }
 
+    if (student.status !== "approved") {
+      return NextResponse.json(
+        { valid: false, message: "ID is not approved" },
+        { status: 403 }
+      );
+    }
+
+    // ✅ VERIFIED
     return NextResponse.json({
       valid: true,
       student: {
@@ -38,6 +46,7 @@ export async function GET(req) {
         email: student.studentEmail,
       },
     });
+
   } catch (err) {
     console.error("VERIFY ERROR:", err);
     return NextResponse.json(
