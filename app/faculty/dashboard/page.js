@@ -176,57 +176,87 @@ export default function FacultyDashboard() {
         </p>
       )}
 
-      {filtered.map((s) => (
-        <div
-          key={s._id}
-          className="
-            bg-slate-900 p-5 md:p-6
-            rounded-2xl border border-white/10
-            space-y-1
-          "
+     {filtered.map((s) => (
+  <div
+    key={s._id}
+    className="
+      bg-slate-900 p-5 md:p-6
+      rounded-2xl border border-white/10
+      space-y-3
+    "
+  >
+    {/* TOP ROW: PHOTO + BASIC INFO */}
+    <div className="flex gap-4 items-start">
+      
+      {/* STUDENT PHOTO */}
+      <div className="w-20 h-24 shrink-0 rounded-xl overflow-hidden border border-white/10 bg-slate-800">
+        {s.photo ? (
+          <img
+            src={s.photo}
+            alt={s.name}
+            className="w-full h-full object-cover"
+          />
+        ) : (
+          <div className="w-full h-full flex items-center justify-center text-xs text-slate-400">
+            No Photo
+          </div>
+        )}
+      </div>
+
+      {/* DETAILS */}
+      <div className="space-y-1 text-sm">
+        <p><b>Name:</b> {s.name}</p>
+        <p><b>Email:</b> {s.studentEmail}</p>
+        <p><b>Mobile:</b> {s.mobile}</p>
+      </div>
+    </div>
+
+    {/* ADDRESS */}
+    <p className="text-sm">
+      <b>Address:</b> {s.address}
+    </p>
+
+    {/* STATUS */}
+    <p>
+      <b>Status:</b>{" "}
+      <span
+        className={
+          s.status === "approved"
+            ? "text-green-400"
+            : s.status === "rejected"
+            ? "text-red-400"
+            : "text-yellow-400"
+        }
+      >
+        {s.status}
+      </span>
+    </p>
+
+    {/* ENROLLMENT */}
+    {s.enrollment && (
+      <p><b>Enrollment:</b> {s.enrollment}</p>
+    )}
+
+    {/* ACTION BUTTONS */}
+    {s.status === "pending" && (
+      <div className="flex flex-col sm:flex-row gap-3 pt-3">
+        <button
+          onClick={() => approveStudent(s._id)}
+          className="flex-1 bg-green-600 py-2 rounded-xl hover:bg-green-700 transition"
         >
-          <p><b>Name:</b> {s.name}</p>
-          <p><b>Email:</b> {s.studentEmail}</p>
-          <p><b>Mobile:</b> {s.mobile}</p>
+          Approve
+        </button>
+        <button
+          onClick={() => rejectStudent(s._id)}
+          className="flex-1 bg-red-600 py-2 rounded-xl hover:bg-red-700 transition"
+        >
+          Reject
+        </button>
+      </div>
+    )}
+  </div>
+))}
 
-          <p>
-            <b>Status:</b>{" "}
-            <span
-              className={
-                s.status === "approved"
-                  ? "text-green-400"
-                  : s.status === "rejected"
-                  ? "text-red-400"
-                  : "text-yellow-400"
-              }
-            >
-              {s.status}
-            </span>
-          </p>
-
-          {s.enrollment && (
-            <p><b>Enrollment:</b> {s.enrollment}</p>
-          )}
-
-          {/* ACTION BUTTONS */}
-          {s.status === "pending" && (
-            <div className="flex flex-col sm:flex-row gap-3 mt-4">
-              <button
-                onClick={() => approveStudent(s._id)}
-                className="flex-1 bg-green-600 py-2 rounded-xl hover:bg-green-700"
-              >
-                Approve
-              </button>
-              <button
-                onClick={() => rejectStudent(s._id)}
-                className="flex-1 bg-red-600 py-2 rounded-xl hover:bg-red-700"
-              >
-                Reject
-              </button>
-            </div>
-          )}
-        </div>
-      ))}
     </div>
   </div>
 );
